@@ -2,7 +2,6 @@ import argparse
 import os
 import torch
 import numpy as np
-from torch.utils.tensorboard import SummaryWriter
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 from experiments.exp_ETTh import Exp_ETTh
 
@@ -29,7 +28,7 @@ parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple g
 parser.add_argument('--devices', type=str, default='0',help='device ids of multile gpus')
                                                                                   
 ### -------  input/output length settings --------------                                                                            
-parser.add_argument('--seq_len', type=int, default=480, help='input sequence length of SCINet encoder, look back window')
+parser.add_argument('--seq_len', type=int, default=192, help='input sequence length of SCINet encoder, look back window')
 parser.add_argument('--label_len', type=int, default=96, help='start token length of Informer decoder')
 parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length, horizon')
 parser.add_argument('--concat_len', type=int, default=0)
@@ -43,15 +42,15 @@ parser.add_argument('--num_workers', type=int, default=0, help='data loader num 
 parser.add_argument('--itr', type=int, default=0, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=100, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=8, help='batch size of train input data')
-parser.add_argument('--patience', type=int, default=50, help='early stopping patience')
-parser.add_argument('--lr', type=float, default=3e-5, help='optimizer learning rate')
-parser.add_argument('--loss', type=str, default='rmse',help='loss function')
+parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
+parser.add_argument('--lr', type=float, default=0.0001, help='optimizer learning rate')
+parser.add_argument('--loss', type=str, default='mae',help='loss function')
 parser.add_argument('--lradj', type=int, default=1,help='adjust learning rate')
 parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
 parser.add_argument('--save', type=bool, default =True, help='save the output results')
 parser.add_argument('--model_name', type=str, default='SCINet')
 parser.add_argument('--resume', type=bool, default=False)
-parser.add_argument('--evaluate', type=bool, default=False)
+parser.add_argument('--evaluate', type=bool, default=True)
 
 ### -------  model settings --------------  
 parser.add_argument('--hidden-size', default=2, type=float, help='hidden channel of module')
@@ -79,7 +78,7 @@ if args.use_gpu and args.use_multi_gpu:
     args.gpu = args.device_ids[0]
 
 data_parser = {
-    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [35, 35, 35], 'S': [1, 1, 1], 'MS': [35, 35, 1]},
+    'ETTh1': {'data': 'infer.csv', 'T': 'OT', 'M': [9, 9, 9], 'S': [1, 1, 1], 'MS': [9, 9, 1]},
 }
 if args.data in data_parser.keys():
     data_info = data_parser[args.data]
@@ -87,7 +86,6 @@ if args.data in data_parser.keys():
     args.target = data_info['T']
     args.enc_in, args.dec_in, args.c_out = data_info[args.features]
 
-print('@@@@@',args.enc_in, args.dec_in, args.c_out)
 args.detail_freq = args.freq
 args.freq = args.freq[-1:]
 
@@ -102,48 +100,8 @@ torch.backends.cudnn.enabled = True
 
 Exp = Exp_ETTh
 
-mae_ = []
-maes_ = []
-mse_ = []
-mses_ = []
-
 if args.evaluate:
     setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_lr{}_bs{}_hid{}_s{}_l{}_dp{}_inv{}_itr0'.format(args.model,args.data, args.features, args.seq_len, args.label_len, args.pred_len,args.lr,args.batch_size,args.hidden_size,args.stacks, args.levels,args.dropout,args.inverse)
     exp = Exp(args)  # set experiments
-    print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-    mae, maes, mse, mses = exp.test(setting, evaluate=True)
-    print('Final mean normed mse:{:.4f},mae:{:.4f},denormed mse:{:.4f},mae:{:.4f}'.format(mse, mae, mses, maes))
-else:
-    if args.itr:
-        for ii in range(args.itr):
-            # setting record of experiments
-            setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_lr{}_bs{}_hid{}_s{}_l{}_dp{}_inv{}_itr{}'.format(args.model,args.data, args.features, args.seq_len, args.label_len, args.pred_len,args.lr,args.batch_size,args.hidden_size,args.stacks, args.levels,args.dropout,args.inverse,ii)
-
-            exp = Exp(args)  # set experiments
-            print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-            exp.train(setting)
-
-            print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-            mae, maes, mse, mses = exp.test(setting)
-            mae_.append(mae)
-            mse_.append(mse)
-            maes_.append(maes)
-            mses_.append(mses)
-
-            torch.cuda.empty_cache()
-        print('Final mean normed mse:{:.4f}, std mse:{:.4f}, mae:{:.4f}, std mae:{:.4f}'.format(np.mean(mse_), np.std(mse_), np.mean(mae_),np.std(mae_)))
-        print('Final mean denormed mse:{:.4f}, std mse:{:.4f}, mae:{:.4f}, std mae:{:.4f}'.format(np.mean(mses_),np.std(mses_), np.mean(maes_), np.std(maes_)))
-        print('Final min normed mse:{:.4f}, mae:{:.4f}'.format(min(mse_), min(mae_)))
-        print('Final min denormed mse:{:.4f}, mae:{:.4f}'.format(min(mses_), min(maes_)))
-    else:
-        setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_lr{}_bs{}_hid{}_s{}_l{}_dp{}_inv{}_itr0'.format(args.model,args.data, args.features, args.seq_len, args.label_len, args.pred_len,args.lr,args.batch_size,args.hidden_size,args.stacks, args.levels,args.dropout,args.inverse)
-        exp = Exp(args)  # set experiments
-        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-        exp.train(setting)
-
-        print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-        mae, maes, mse, mses = exp.test(setting)
-        print('Final mean normed mse:{:.4f},mae:{:.4f},denormed mse:{:.4f},mae:{:.4f}'.format(mse, mae, mses, maes))
-
-
-
+    print('>>>>>>>infer : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+    exp.infer(setting, evaluate=True)

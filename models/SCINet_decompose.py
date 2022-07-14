@@ -1,5 +1,3 @@
-
-
 import math
 import torch.nn.functional as F
 from torch.autograd import Variable

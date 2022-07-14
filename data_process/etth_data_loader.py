@@ -47,8 +47,13 @@ class Dataset_ETT_hour(Dataset):
         df_raw = pd.read_csv(os.path.join(self.root_path,
                                           self.data_path))
 
-        border1s = [0, 12*30*24 - self.seq_len, 12*30*24+4*30*24 - self.seq_len]
-        border2s = [12*30*24, 12*30*24+4*30*24, 12*30*24+8*30*24]
+        # border1s = [ 0,                     int(len(df_raw)*0.8) - self.seq_len, int(len(df_raw)*0.9) - self.seq_len ] 
+        # border2s = [ int(len(df_raw)*0.8), int(len(df_raw)*0.9)               , len(df_raw)]
+
+        border1s = [ 0,                     int(len(df_raw)*0.8) - self.seq_len,0] 
+        border2s = [ int(len(df_raw)*0.8), int(len(df_raw)*0.9)               , len(df_raw)]
+        
+
         border1 = border1s[self.set_type]
         border2 = border2s[self.set_type]
         
@@ -365,4 +370,75 @@ class Dataset_Pred(Dataset):
         return len(self.data_x) - self.seq_len + 1
 
     def inverse_transform(self, data):
+        return self.scaler.inverse_transform(data)
+
+class Dataset_Infer(Dataset):
+    def __init__(self, root_path, flag='pred', size=None, 
+                 features='S', data_path='infer.csv', 
+                 target='OT', scale=True, inverse=False, timeenc=0, freq='15min', cols=None):
+        # size [seq_len, label_len, pred_len]
+        # info
+        if size == None:
+            self.seq_len = 24*4*4
+            self.label_len = 24*4
+            self.pred_len = 24*4
+        else:
+            self.seq_len = size[0]
+            self.label_len = size[1]
+            self.pred_len = size[2]
+        
+        self.features = features
+        self.target = target
+        self.scale = scale
+        self.inverse = inverse
+        self.timeenc = timeenc
+        self.freq = freq
+        self.cols=cols
+        self.root_path = root_path
+        self.data_path = data_path
+        self.__read_data__()
+
+    def __read_data__(self):
+        self.scaler = StandardScaler()
+        df_raw = pd.read_csv(os.path.join(self.root_path,
+                                          self.data_path))
+        '''
+        df_raw.columns: ['date', ...(other features), target feature]
+        '''
+
+        # border1 = len(df_raw)-self.seq_len
+        # border2 = len(df_raw)
+
+        border1 = len(df_raw)-self.seq_len*2
+        border2 = len(df_raw)-self.seq_len
+
+        
+        if self.features=='M' or self.features=='MS':
+            cols_data = df_raw.columns[1:]
+            df_data = df_raw[cols_data]
+        elif self.features=='S':
+            df_data = df_raw[[self.target]]
+
+        if self.scale:
+            self.scaler.load()
+            data = self.scaler.transform(df_data.values)
+        else:
+            data = df_data.values
+
+        self.data_x = data[border1:border2]
+
+    
+    def __getitem__(self, index):
+        s_begin = index
+        s_end = s_begin + self.seq_len
+
+        seq_x = self.data_x[s_begin:s_end]
+
+        return seq_x
+    
+    def __len__(self):
+        return len(self.data_x) - self.seq_len + 1
+
+    def inverse_transform(self, data):
+        self.scaler.load()
         return self.scaler.inverse_transform(data)
