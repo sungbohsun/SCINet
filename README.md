@@ -9,13 +9,13 @@
 ![alt text](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
  訓練使用csv 路徑為.\datasets\ETT-data\TrainOneDay.csv.
 
-## 丟棄NA與std=0欄位
+## 調整欄位名稱 OT為目標欄位
+
+丟棄NA與std=0欄位
 ```
 data = pd.read_csv(r'datasets\ETT-data\TrainOneDay.csv')
 data = data.dropna(axis=0).drop(data.std()[(data.std() == 0)].index, axis=1)
 ```
-
-## 調整欄位名稱OT為目標欄位
 日期 X1,X2... 預測目標
 ```
 data = data.rename(columns={
@@ -23,7 +23,7 @@ data = data.rename(columns={
 })
 data  = data[['date'] + list(data.columns[2:-1]) + ['OT']]
 ```
-## 儲存處裡完成csv
+儲存處裡完成csv
 ```
 data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
 ```
