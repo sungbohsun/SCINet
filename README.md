@@ -8,14 +8,10 @@
 ## demo.ipynb 範例、資料前處理與視覺化工具
 ![alt text](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
  訓練使用csv 路徑為.\datasets\ETT-data\TrainOneDay.csv.
-## 調整欄位為 日期, 變量 1, 2, 3..., 預測目標
- df_raw.columns: ['date', ...(other features), target feature]
-```
-data = pd.read_csv(r'datasets\ETT-data\TrainOneDay.csv')
-```
 
 ## 丟棄NA與std=0欄位
 ```
+data = pd.read_csv(r'datasets\ETT-data\TrainOneDay.csv')
 data = data.dropna(axis=0).drop(data.std()[(data.std() == 0)].index, axis=1)
 ```
 
