@@ -16,6 +16,7 @@ data = data.dropna(axis=0).drop(data.std()[(data.std() == 0)].index, axis=1)
 ```
 
 ## 調整欄位名稱OT為目標欄位
+日期 X1,X2... 預測目標
 ```
 data = data.rename(columns={
     data.columns[0]:'date',  data.columns[-1]:'OT'
