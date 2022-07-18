@@ -53,6 +53,13 @@ data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
 
 ```
 
+## 訓練Customer Data 請將 run_Etth.py 中 34 修改為當前變量數目(x+y) 
+```
+data_parser = {
+    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [34, 34, 34], 'S': [1, 1, 1], 'MS': [34, 34, 1]},
+}
+```
+
 ### Training DEMO
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --model_name h2_b16_2day_ms 
