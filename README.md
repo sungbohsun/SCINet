@@ -61,17 +61,17 @@ data_parser = {
 }
 ```
 
-### Training DEMO
+Training DEMO
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --model_name h2_b16_2day_ms 
 ```
 
-### Test DEMO
+Test DEMO
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --evaluateAll True
 ```
 
-### Infer Demo
+Infer Demo
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS  --infer True
 ```
