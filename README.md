@@ -8,9 +8,9 @@
 
 This is the original PyTorch implementation of the following work: [Time Series is a Special Sequence: Forecasting with Sample Convolution and Interaction](https://arxiv.org/pdf/2106.09305.pdf). If you find this repository useful for your work, please consider citing it as follows:
 
-demo.ipynb 範例、資料前處理與視覺化工具
+### demo.ipynb 範例、資料前處理與視覺化工具
 .\datasets\ETT-data\TrainOneDay.csv 準備訓練資料
-'''
+```
 # 訓練使用csv 路徑為.\datasets\ETT-data\TrainOneDay.csv
 # 欄位 '日期' ,'(features1,2,3,4)' , '預測目標'
 
@@ -29,7 +29,7 @@ data  = data[['date'] + list(data.columns[2:-1]) + ['OT']]
 
 #儲存處裡完成csv
 data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
-'''
+```
 
 ```
 # 重要參數
@@ -54,17 +54,17 @@ data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
 
 ```
 
-Training DEMO
-'''
+###Training DEMO
+```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --model_name h2_b16_2day_ms 
-'''
+```
 
-Test DEMO
-'''
+###Test DEMO
+```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --evaluateAll True
-'''
+```
 
-Infer Demo
-'''
+###Infer Demo
+```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS  --infer True
-'''
+```
