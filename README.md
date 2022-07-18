@@ -49,7 +49,7 @@ data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
  --patience     type=int,  default=15       Valid set 幾次 loss 沒有下降提早終止訓練
  --hidden-size  type=int,  default=2        隱藏層數量 建議1~5
  --batch_size   type=int,  default=8        訓練批次大小 建議2,4,8,16,32,64,128,256
- --lr'          type=float default=3e-3     學習速率建議 1e-3 ~ 1e-5
+ --lr           type=float default=3e-3     學習速率建議 1e-3 ~ 1e-5
 
 ```
 
