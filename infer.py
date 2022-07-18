@@ -28,7 +28,7 @@ parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple g
 parser.add_argument('--devices', type=str, default='0',help='device ids of multile gpus')
                                                                                   
 ### -------  input/output length settings --------------                                                                            
-parser.add_argument('--seq_len', type=int, default=192, help='input sequence length of SCINet encoder, look back window')
+parser.add_argument('--seq_len', type=int, default=480, help='input sequence length of SCINet encoder, look back window')
 parser.add_argument('--label_len', type=int, default=96, help='start token length of Informer decoder')
 parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length, horizon')
 parser.add_argument('--concat_len', type=int, default=0)
@@ -42,15 +42,17 @@ parser.add_argument('--num_workers', type=int, default=0, help='data loader num 
 parser.add_argument('--itr', type=int, default=0, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=100, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=8, help='batch size of train input data')
-parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
-parser.add_argument('--lr', type=float, default=0.0001, help='optimizer learning rate')
+parser.add_argument('--patience', type=int, default=15, help='early stopping patience')
+parser.add_argument('--lr', type=float, default=3e-3, help='optimizer learning rate')
 parser.add_argument('--loss', type=str, default='mae',help='loss function')
 parser.add_argument('--lradj', type=int, default=1,help='adjust learning rate')
-parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
+parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=True)
 parser.add_argument('--save', type=bool, default =True, help='save the output results')
 parser.add_argument('--model_name', type=str, default='SCINet')
 parser.add_argument('--resume', type=bool, default=False)
 parser.add_argument('--evaluate', type=bool, default=True)
+parser.add_argument('--evaluateAll', type=bool, default=False, help='evaluate all date set')
+
 
 ### -------  model settings --------------  
 parser.add_argument('--hidden-size', default=2, type=float, help='hidden channel of module')
@@ -78,7 +80,7 @@ if args.use_gpu and args.use_multi_gpu:
     args.gpu = args.device_ids[0]
 
 data_parser = {
-    'ETTh1': {'data': 'infer.csv', 'T': 'OT', 'M': [9, 9, 9], 'S': [1, 1, 1], 'MS': [9, 9, 1]},
+    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [34, 34, 34], 'S': [1, 1, 1], 'MS': [34, 34, 1]},
 }
 if args.data in data_parser.keys():
     data_info = data_parser[args.data]

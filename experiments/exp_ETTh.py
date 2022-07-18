@@ -103,7 +103,8 @@ class Exp_ETTh(Exp_Basic):
             inverse=args.inverse,
             timeenc=timeenc,
             freq=freq,
-            cols=args.cols
+            cols=args.cols,
+            evaluateAll = args.evaluateAll
         )
         print(flag, len(data_set))
         data_loader = DataLoader(

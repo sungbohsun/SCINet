@@ -43,8 +43,8 @@ parser.add_argument('--num_workers', type=int, default=0, help='data loader num 
 parser.add_argument('--itr', type=int, default=0, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=100, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=8, help='batch size of train input data')
-parser.add_argument('--patience', type=int, default=50, help='early stopping patience')
-parser.add_argument('--lr', type=float, default=3e-5, help='optimizer learning rate')
+parser.add_argument('--patience', type=int, default=15, help='early stopping patience')
+parser.add_argument('--lr', type=float, default=3e-3, help='optimizer learning rate')
 parser.add_argument('--loss', type=str, default='rmse',help='loss function')
 parser.add_argument('--lradj', type=int, default=1,help='adjust learning rate')
 parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
@@ -52,6 +52,9 @@ parser.add_argument('--save', type=bool, default =True, help='save the output re
 parser.add_argument('--model_name', type=str, default='SCINet')
 parser.add_argument('--resume', type=bool, default=False)
 parser.add_argument('--evaluate', type=bool, default=False)
+parser.add_argument('--evaluateAll', type=bool, default=False, help='evaluate all date set')
+parser.add_argument('--infer', type=bool, default=False, help='infer')
+
 
 ### -------  model settings --------------  
 parser.add_argument('--hidden-size', default=2, type=float, help='hidden channel of module')
@@ -79,7 +82,7 @@ if args.use_gpu and args.use_multi_gpu:
     args.gpu = args.device_ids[0]
 
 data_parser = {
-    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [35, 35, 35], 'S': [1, 1, 1], 'MS': [35, 35, 1]},
+    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [34, 34, 34], 'S': [1, 1, 1], 'MS': [34, 34, 1]},
 }
 if args.data in data_parser.keys():
     data_info = data_parser[args.data]
@@ -87,7 +90,6 @@ if args.data in data_parser.keys():
     args.target = data_info['T']
     args.enc_in, args.dec_in, args.c_out = data_info[args.features]
 
-print('@@@@@',args.enc_in, args.dec_in, args.c_out)
 args.detail_freq = args.freq
 args.freq = args.freq[-1:]
 
@@ -107,12 +109,19 @@ maes_ = []
 mse_ = []
 mses_ = []
 
-if args.evaluate:
+if args.evaluateAll or args.infer:
+    args.evaluate=True
+
+if args.evaluate or args.evaluateAll:
     setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_lr{}_bs{}_hid{}_s{}_l{}_dp{}_inv{}_itr0'.format(args.model,args.data, args.features, args.seq_len, args.label_len, args.pred_len,args.lr,args.batch_size,args.hidden_size,args.stacks, args.levels,args.dropout,args.inverse)
     exp = Exp(args)  # set experiments
-    print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-    mae, maes, mse, mses = exp.test(setting, evaluate=True)
-    print('Final mean normed mse:{:.4f},mae:{:.4f},denormed mse:{:.4f},mae:{:.4f}'.format(mse, mae, mses, maes))
+    if args.infer:
+        print('----- infer  : {} -----'.format(setting))
+        exp.infer(setting, evaluate=True)
+    else:
+        print('----- testing : {} -----'.format(setting))
+        mae, maes, mse, mses = exp.test(setting, evaluate=True)
+        print('Final mean normed mse:{:.4f},mae:{:.4f},denormed mse:{:.4f},mae:{:.4f}'.format(mse, mae, mses, maes))
 else:
     if args.itr:
         for ii in range(args.itr):
@@ -120,10 +129,10 @@ else:
             setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_lr{}_bs{}_hid{}_s{}_l{}_dp{}_inv{}_itr{}'.format(args.model,args.data, args.features, args.seq_len, args.label_len, args.pred_len,args.lr,args.batch_size,args.hidden_size,args.stacks, args.levels,args.dropout,args.inverse,ii)
 
             exp = Exp(args)  # set experiments
-            print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
+            print('----- start training : {} -----'.format(setting))
             exp.train(setting)
 
-            print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+            print('----- testing : {} -----'.format(setting))
             mae, maes, mse, mses = exp.test(setting)
             mae_.append(mae)
             mse_.append(mse)
