@@ -80,8 +80,12 @@ if args.use_gpu and args.use_multi_gpu:
     args.device_ids = [int(id_) for id_ in device_ids]
     args.gpu = args.device_ids[0]
 
+f = open('datasets/ETT-data/Etth1.csv','r')
+txt = f.readline()
+cols_num = len(txt.split(',')) -1
+
 data_parser = {
-    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [34, 34, 34], 'S': [1, 1, 1], 'MS': [34, 34, 1]},
+    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [cols_num, cols_num, cols_num], 'S': [1, 1, 1], 'MS': [cols_num, cols_num, 1]},
 }
 if args.data in data_parser.keys():
     data_info = data_parser[args.data]
