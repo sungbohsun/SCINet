@@ -6,26 +6,24 @@
 
 
 ## demo.ipynb 範例、資料前處理與視覺化工具
+![alt text](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
  訓練使用csv 路徑為.\datasets\ETT-data\TrainOneDay.csv.
-## 調整欄位為 日期, 變量 1, 2, 3..., 預測目標
- df_raw.columns: ['date', ...(other features), target feature]
+
+## 調整欄位名稱 OT為目標欄位
+
+丟棄NA與std=0欄位
 ```
 data = pd.read_csv(r'datasets\ETT-data\TrainOneDay.csv')
-```
-
-## 丟棄NA與std=0欄位
-```
 data = data.dropna(axis=0).drop(data.std()[(data.std() == 0)].index, axis=1)
 ```
-
-## 調整欄位名稱OT為目標欄位
+日期 X1,X2... 預測目標
 ```
 data = data.rename(columns={
     data.columns[0]:'date',  data.columns[-1]:'OT'
 })
 data  = data[['date'] + list(data.columns[2:-1]) + ['OT']]
 ```
-## 儲存處裡完成csv
+儲存處裡完成csv
 ```
 data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
 ```
@@ -52,21 +50,28 @@ data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
  --patience     type=int,  default=15       Valid set 幾次 loss 沒有下降提早終止訓練
  --hidden-size  type=int,  default=2        隱藏層數量 建議1~5
  --batch_size   type=int,  default=8        訓練批次大小 建議2,4,8,16,32,64,128,256
- --lr'          type=float default=3e-3     學習速率建議 1e-3 ~ 1e-5
+ --lr           type=float default=3e-3     學習速率建議 1e-3 ~ 1e-5
 
 ```
 
-### Training DEMO
+## 訓練Customer Data 請將 run_Etth.py 中 34 修改為當前變量數目(x+y) 
+```
+data_parser = {
+    'ETTh1': {'data': 'ETTh1.csv', 'T': 'OT', 'M': [34, 34, 34], 'S': [1, 1, 1], 'MS': [34, 34, 1]},
+}
+```
+
+Training DEMO
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --model_name h2_b16_2day_ms 
 ```
 
-### Test DEMO
+Test DEMO
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS --evaluateAll True
 ```
 
-### Infer Demo
+Infer Demo
 ```
 python .\run_ETTh.py --hidden-size 2 --batch_size 16  --seq_len 192 --label_len 96 --pred_len 96 --features MS  --infer True
 ```
