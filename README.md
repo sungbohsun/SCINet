@@ -5,9 +5,9 @@
 ![pytorch](https://img.shields.io/badge/-PyTorch-%23EE4C2C?logo=PyTorch&labelColor=lightgrey)
 
 
-## demo.ipynb 範例、資料前處理與視覺化工具
+# streamlit run .\run.py
 ![alt text](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
- 訓練使用csv 路徑為.\datasets\ETT-data\TrainOneDay.csv.
+ 訓練與驗證工具 2020-07-20
 
 ## 調整欄位名稱 OT為目標欄位
 
