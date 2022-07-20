@@ -16,6 +16,7 @@ from utils.tools import EarlyStopping, adjust_learning_rate, save_model, load_mo
 from metrics.ETTh_metrics import metric
 from models.SCINet import SCINet
 from models.SCINet_decompose import SCINet_decompose
+from tqdm import tqdm
 
 class Exp_ETTh(Exp_Basic):
     def __init__(self, args):
@@ -87,7 +88,6 @@ class Exp_ETTh(Exp_Basic):
             shuffle_flag = False; drop_last = True; batch_size = args.batch_size; freq=args.freq
         elif flag=='pred':
             shuffle_flag = False; drop_last = False; batch_size = 1; freq=args.detail_freq
-            Data = Dataset_Pred
         elif flag=='infer':
             shuffle_flag = False; drop_last = False; batch_size = 1; freq=args.detail_freq
             Data = Dataset_Infer
@@ -140,7 +140,7 @@ class Exp_ETTh(Exp_Basic):
         true_scales = []
         mid_scales = []
 
-        for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(valid_loader):
+        for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(tqdm(valid_loader)):
             pred, pred_scale, mid, mid_scale, true, true_scale = self._process_one_batch_SCINet(
                 valid_data, batch_x, batch_y)
 
@@ -238,7 +238,7 @@ class Exp_ETTh(Exp_Basic):
         else:
             epoch_start = 0
 
-        for epoch in range(epoch_start, self.args.train_epochs):
+        for epoch in tqdm(range(epoch_start, self.args.train_epochs)):
             iter_count = 0
             train_loss = []
             
@@ -247,7 +247,7 @@ class Exp_ETTh(Exp_Basic):
             adj_loss = np.log(np.array(list(range(train_steps,0,-1))))
             adj_w = ((adj_loss.max()-adj_loss)/adj_loss.max())*5
             adj_loss_norm = torch.from_numpy(adj_w+1).cuda()
-            for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(train_loader):
+            for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(tqdm(train_loader)):
                 iter_count += 1
                 
                 model_optim.zero_grad()
@@ -306,7 +306,10 @@ class Exp_ETTh(Exp_Basic):
         return self.model
 
     def test(self, setting, evaluate=False):
-        test_data, test_loader = self._get_data(flag='test')
+        if self.args.evaluateAll:
+            test_data, test_loader = self._get_data(flag='pred')
+        else:
+            test_data, test_loader = self._get_data(flag='test')
         
         self.model.eval()
         
@@ -334,7 +337,7 @@ class Exp_ETTh(Exp_Basic):
         #         valid_data, batch_x, batch_y)
 
         
-        for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(test_loader):
+        for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(tqdm(test_loader)):
             pred, pred_scale, mid, mid_scale, true, true_scale = self._process_one_batch_SCINet(
                 test_data, batch_x, batch_y)
 

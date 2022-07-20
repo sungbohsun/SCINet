@@ -27,8 +27,8 @@ class Dataset_ETT_hour(Dataset):
             self.label_len = size[1]
             self.pred_len = size[2]
         # init
-        assert flag in ['train', 'test', 'val']
-        type_map = {'train':0, 'val':1, 'test':2}
+        assert flag in ['train', 'test', 'val','pred']
+        type_map = {'train':0, 'val':1, 'test':2,'pred':-1}
         self.set_type = type_map[flag]
         
         self.features = features
@@ -286,7 +286,7 @@ class Dataset_Custom(Dataset):
 class Dataset_Pred(Dataset):
     def __init__(self, root_path, flag='pred', size=None, 
                  features='S', data_path='ETTh1.csv', 
-                 target='OT', scale=True, inverse=False, timeenc=0, freq='15min', cols=None):
+                 target='OT', scale=True, inverse=False, timeenc=0, freq='15min', cols=None,evaluateAll=None):
         # size [seq_len, label_len, pred_len]
         # info
         if size == None:

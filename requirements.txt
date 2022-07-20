@@ -1,8 +1,4 @@
-numpy==1.19.4
-torch==1.8.0
-pandas
 scikit_learn
 tensorboard
-plotly
-ipywidgets
-matplotlib
+streamlit
+#conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
