@@ -11,7 +11,7 @@ pip install -r .\requirements.txt
 conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
 ```
 
-# 啟動streamli
+# 啟動streamlit
 ```
 streamlit run .\run.py
 ```
