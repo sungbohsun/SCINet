@@ -7,6 +7,6 @@
 
 # streamlit 訓練與驗證工具
 ![pic1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo1.png)
-![pic1_1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo1_1.png)
-![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo/demo2.png)
+![pic1_1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo2.png)
+![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo/demo3.png)
  2020-07-20
