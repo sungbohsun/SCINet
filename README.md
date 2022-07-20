@@ -5,9 +5,10 @@
 ![pytorch](https://img.shields.io/badge/-PyTorch-%23EE4C2C?logo=PyTorch&labelColor=lightgrey)
 
 
-# streamlit run .\run.py
-![alt text](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
- 訓練與驗證工具 2020-07-20
+# streamlit 訓練與驗證工具
+![pic1](https://github.com/sungbohsun/SCINet/blob/main/demo.png)
+![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo2.png)
+ 2020-07-20
 
 ## 調整欄位名稱 OT為目標欄位
 
