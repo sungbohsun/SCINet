@@ -22,3 +22,8 @@ streamlit run .\run.py
 ![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo/demo2.png)
 ![pic3](https://github.com/sungbohsun/SCINet/blob/main/demo/demo3.png)
  2020-07-20
+
+# tensorboard訓練紀錄
+```
+tensorboard --logdir=./event
+```
