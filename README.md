@@ -7,6 +7,7 @@
 # 環境建置
 ```
 git clone https://github.com/sungbohsun/SCINet
+cd SCINet
 pip install -r .\requirements.txt
 conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
 ```
