@@ -4,6 +4,17 @@
 
 ![pytorch](https://img.shields.io/badge/-PyTorch-%23EE4C2C?logo=PyTorch&labelColor=lightgrey)
 
+環境建置
+'''
+git clone https://github.com/sungbohsun/SCINet
+pip install -r .\requirements.txt
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+'''
+
+啟動streamli
+'''
+streamlit run .\run.py
+'''
 
 # streamlit 訓練與驗證工具
 ![pic1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo1.png)
