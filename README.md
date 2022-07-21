@@ -4,9 +4,26 @@
 
 ![pytorch](https://img.shields.io/badge/-PyTorch-%23EE4C2C?logo=PyTorch&labelColor=lightgrey)
 
+## 環境建置
+```
+git clone https://github.com/sungbohsun/SCINet
+cd SCINet
+pip install -r .\requirements.txt
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+```
 
-# streamlit 訓練與驗證工具
+## 啟動streamlit
+```
+streamlit run .\run.py
+```
+
+## streamlit 訓練與驗證工具
 ![pic1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo1.png)
 ![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo/demo2.png)
 ![pic3](https://github.com/sungbohsun/SCINet/blob/main/demo/demo3.png)
  2020-07-20
+
+## tensorboard訓練紀錄
+```
+tensorboard --logdir=./event
+```
