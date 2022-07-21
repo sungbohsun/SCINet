@@ -27,3 +27,16 @@ streamlit run .\run.py
 ```
 tensorboard --logdir=./event
 ```
+##### Parameter highlights
+
+| Parameter Name | Description                  | Parameter in paper | Default                    |
+| -------------- | ---------------------------- | ------------------ | -------------------------- |
+| root_path      | The root path of subdatasets | N/A                | './datasets/ETT-data/ETT/' |
+| data           | Subdataset                   | N/A                | ETTh1                      |
+| pred_len       | Horizon                      | Horizon            | 192                         |
+| seq_len        | Look-back window             | Look-back window   | 96                         |
+| batch_size     | Batch size                   | batch size         | 16                         |
+| lr             | Learning rate                | learning rate      | 1e-3                     |
+| hidden-size    | hidden expansion             | h                  | 1                          |
+| levels         | SCINet block levels          | L                  | 3                          |
+| stacks         | The number of SCINet blocks  | K                  | 1                          |
