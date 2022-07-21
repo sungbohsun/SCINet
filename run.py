@@ -6,10 +6,12 @@ import plotly.graph_objects as go
 import altair as alt
 from subprocess import Popen, PIPE, CalledProcessError
 import time,sys
+from datetime import datetime,timedelta
 from glob import glob
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from PIL import Image
+import dateutil.parser
 
 
 def rmse(true,pred):
@@ -41,10 +43,14 @@ def execute_experiment(cmd):
     with st.empty():
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as process:
             for line in process.stdout:
-                if line.find('Epoch') >-1:
+                if line.find('cost time') >-1:
                     st.write(f"⏳ {line}")
-                    p = float(line.split(',')[0].split(': ')[-1].replace('\n',''))
+                    p = float(line.split(' cost')[0].split(': ')[-1].replace('\n',''))
                     my_bar.progress(int((p/train_epochs)*100))
+
+def color_survived(val):
+    color = 'green' if val else 'red'
+    return f'background-color: {color}'
 
 
 st.markdown(rf'''
@@ -64,22 +70,40 @@ with tab1:
         data = pd.read_csv(uploaded_file)
         cols = list(data.columns)
 
-        st.write(data.head())
-
-        time = st.selectbox(
-            '時間欄位',
+        st.subheader('時間欄位')
+        col_time = st.selectbox(
+            'col_time',
             cols,
             index=0
             )
-        
-        target = st.selectbox(
-            '預測目標',
+        st.subheader('預測目標')
+        col_target = st.selectbox(
+            'col_target',
             cols,
             index=data.shape[1]-1
             )
 
+        st.write(data.head())
 
-        fig = fig_plotly(time,target,n=0)
+        
+        TIME = list(map(lambda x : dateutil.parser.parse(x),data[col_time]))
+        data[col_time] = TIME
+
+        st.subheader('選擇資料範圍')
+        appointment = st.slider(
+            "appointment",
+            min_value = TIME[0],
+            max_value = TIME[-1],
+            step = TIME[1] - TIME[0],
+            value=(TIME[0], TIME[-1]))
+
+        st.caption(f'''開始時間 {appointment[0].strftime("%x")} {appointment[0].strftime("%X")}   ''')
+        st.caption(f'''結束時間 {appointment[-1].strftime("%x")} {appointment[-1].strftime("%X")}''')
+
+        data = data[(data[col_time] > appointment[0])]
+        data = data[(data[col_time] < appointment[-1])]
+
+        fig = fig_plotly(col_time,col_target,n=0)
 
         st.plotly_chart(fig, use_container_width=True)
         
@@ -90,9 +114,13 @@ with tab1:
 
             #調整欄位名稱OT為目標欄位
             data = data.rename(columns={
-                data.columns[0]:'date',  data.columns[-1]:'OT'
+                col_time:'date',  col_target:'OT'
             })
-            data  = data[['date'] + list(data.columns[2:-1]) + ['OT']]
+            cols = list(data.columns)
+            cols.remove('date')
+            cols.remove('OT')
+
+            data  = data[['date'] + cols + ['OT']]
 
             #儲存處裡完成csv
             data.to_csv(r'datasets\ETT-data\ETTh1.csv',index=False)
@@ -160,7 +188,7 @@ with tab2:
     st.subheader('學習速率')
     lr = st.selectbox('lr',('1e-3', '1e-4', '1e-5'),index=0)
 
-    code = f'''python {os.getcwd()}\\run_ETTh.py --features {features} --seq_len {seq_len} --label_len {label_len} --pred_len {label_len} --model_name {model_name} --train_epochs {train_epochs} --patience {patience} --hidden-size {hidden_size} --batch_size {batch_size}  --lr {lr}'''
+    code = f'''python {os.getcwd()}\\run_ETTh.py --features {features} --seq_len {seq_len} --label_len {label_len} --pred_len {label_len} --model {model_name} --model_name {model_name} --train_epochs {train_epochs} --patience {patience} --hidden-size {hidden_size} --batch_size {batch_size}  --lr {lr}'''
     st.code(code, language='python')
 
     if st.button('開始訓練'):

@@ -1,4 +1,6 @@
 scikit_learn
 tensorboard
+tqdm
+plotly
 streamlit
 #conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch

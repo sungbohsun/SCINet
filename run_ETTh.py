@@ -45,7 +45,7 @@ parser.add_argument('--train_epochs', type=int, default=100, help='train epochs'
 parser.add_argument('--batch_size', type=int, default=16, help='batch size of train input data')
 parser.add_argument('--patience', type=int, default=15, help='early stopping patience')
 parser.add_argument('--lr', type=float, default=3e-3, help='optimizer learning rate')
-parser.add_argument('--loss', type=str, default='rmse',help='loss function')
+parser.add_argument('--loss', type=str, default='mse',help='loss function')
 parser.add_argument('--lradj', type=int, default=1,help='adjust learning rate')
 parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
 parser.add_argument('--save', type=bool, default =True, help='save the output results')

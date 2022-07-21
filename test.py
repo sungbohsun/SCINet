@@ -1,17 +1,13 @@
-import time
+from datetime import datetime
 import streamlit as st
-placeholder = st.empty()
+import pandas as pd
+import dateutil.parser
 
-# Replace the placeholder with some text:
-placeholder.text("Hello")
-
-# Replace the text with a chart:
-placeholder.line_chart({"data": [1, 5, 2, 6]})
-
-# Replace the chart with several elements:
-with placeholder.container():
-     st.write("This is one element")
-     st.write("This is another")
-
-# Clear all those elements:
-placeholder.empty()
+data = pd.read_csv(r'datasets\ETT-data\TrainOneDay.csv')
+data.head()
+data['Dtime'] = list(map(lambda x : dateutil.parser.parse(x),data['Dtime']))
+from datetime import time
+appointment = st.slider(
+     "Schedule your appointment:",
+     value=(time(11, 30), time(12, 45)))
+st.write("You're scheduled for:", appointment)
