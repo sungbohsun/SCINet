@@ -21,6 +21,8 @@ streamlit run .\run.py
 ![pic1](https://github.com/sungbohsun/SCINet/blob/main/demo/demo1.png)
 ![pic2](https://github.com/sungbohsun/SCINet/blob/main/demo/demo2.png)
 ![pic3](https://github.com/sungbohsun/SCINet/blob/main/demo/demo3.png)
+![pic4](https://github.com/sungbohsun/SCINet/blob/main/demo/demo4.png)
+![pic5](https://github.com/sungbohsun/SCINet/blob/main/demo/demo5.png)
  2020-07-20
 
 ## tensorboard訓練紀錄
